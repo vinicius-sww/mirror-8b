@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,61 +8,102 @@
 
     <!-- BOOTSTRAP -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-size: 40px;
+            font-family: 'Courier New', cursive;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            margin: 0;
         }
 
         .luz-apagada {
             color: white;
             background-color: black;
         }
+
+        .footer-text {
+            text-align: center;
+            font-size: 1.5em;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            width: 100%;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
-    
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <p>Este site utiliza comandos por voz. Diga "luz" para mudar a cor de fundo.</p>
+                <p>Este site utiliza comandos por voz. Diga "espelho espelho meu existe alguém mais belo do que eu" para mudar a cor de fundo e tocar um áudio.</p>
                 <p>É necessário ter um microfone.</p>
-                <p id="answer">aguardando reconhecimento de voz</p>
             </div>
         </div>
     </div>
 
+    <!-- Elemento de áudio -->
+    <audio id="audioElement" src="Espelho.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
+
+    <div class="footer-text" id="answer">aguardando reconhecimento de voz</div>
+
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             // Testa se o navegador suporta o reconhecimento de voz
             const text = document.getElementById("answer");
+            const audioElement = document.getElementById("audioElement");
+
             if (window.SpeechRecognition || window.webkitSpeechRecognition) {
                 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
                 var recognition = new SpeechRecognition();
-
-                // Define se o reconhecimento será contínuo
-                //recognition.continuous = true;
 
                 // Inicia o reconhecimento
                 recognition.start();
 
                 // Reinicia o reconhecimento ao encerrar
-                recognition.addEventListener('end', function() {
+                recognition.addEventListener('end', function () {
                     recognition.start();
                 });
 
                 // Resultado do reconhecimento
-                recognition.addEventListener('result', function(e) {
+                recognition.addEventListener('result', function (e) {
                     var result = e.results[0][0].transcript;
                     text.textContent = `${result.toLowerCase()}`;
 
-                          // Limpa o texto após 3 segundos
-                          setTimeout(function() {
+                    // Limpa o texto após 3 segundos
+                    setTimeout(function () {
                         text.textContent = 'aguardando reconhecimento de voz';
                     }, 3000);
 
-                    if (result.toLowerCase() === 'luz' || result.toLowerCase() === 'luiz' || result.toLowerCase() === 'xoxota' || result.toLowerCase() === 'bucetinha inchada') {
+                    if (result.toLowerCase() === 'espelho espelho meu existe alguém mais belo do que eu') {
+                        // Pausa o reconhecimento de voz
+                        recognition.stop();
+
+                        // Altera o fundo
                         document.body.classList.toggle('luz-apagada');
+
+                        // Toca o áudio
+                        audioElement.play();
+
+                        // Aguarda o fim do áudio para reiniciar o reconhecimento de voz
+                        audioElement.onended = function () {
+                            recognition.start();
+                        };
                     }
                 });
             } else {
@@ -70,4 +112,5 @@
         });
     </script>
 </body>
+
 </html>

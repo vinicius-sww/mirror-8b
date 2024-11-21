@@ -73,53 +73,87 @@
             const audioElement3 = document.getElementById("audioElement3");
             const audioElement4 = document.getElementById("audioElement4");
 
+            // Array para armazenar todos os elementos de áudio
+            const audioElements = [audioElement1, audioElement2, audioElement3, audioElement4];
+
+            let isAudioPlaying = false; // Flag para verificar se um áudio está tocando
+
+            // Função para parar todos os áudios
+            function stopAllAudio() {
+                audioElements.forEach(audio => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                });
+                isAudioPlaying = false;
+            }
+
             if (window.SpeechRecognition || window.webkitSpeechRecognition) {
                 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
                 var recognition = new SpeechRecognition();
 
-                // Inicia o reconhecimento
-                recognition.start();
+                // Configuração de reconhecimento de voz
+                recognition.continuous = false; // Para de reconhecer ao terminar uma frase
+                recognition.interimResults = false; // Não mostrar resultados intermediários
+                recognition.lang = 'pt-BR';
 
-                // Reinicia o reconhecimento ao encerrar
-                recognition.addEventListener('end', function () {
-                    recognition.start();
-                });
+                // Função para iniciar o reconhecimento de voz
+                function startRecognition() {
+                    if (!isAudioPlaying) {
+                        recognition.start();
+                    }
+                }
+
+                // Função para tocar o áudio e gerenciar o reconhecimento
+                function playAudio(audioElement) {
+                    if (isAudioPlaying) return; // Se já há um áudio tocando, não faça nada
+
+                    isAudioPlaying = true;
+                    stopAllAudio(); // Para qualquer áudio que esteja tocando
+
+                    // Pausar o reconhecimento durante a reprodução do áudio
+                    recognition.stop();
+
+                    // Toca o áudio
+                    audioElement.play();
+                    audioElement.onended = function () {
+                        isAudioPlaying = false; // Marca que o áudio terminou
+                        startRecognition(); // Reinicia o reconhecimento de voz
+                    };
+                }
 
                 // Resultado do reconhecimento
                 recognition.addEventListener('result', function (e) {
-                    var result = e.results[0][0].transcript;
-                    text.textContent = `${result.toLowerCase()}`;
+                    if (isAudioPlaying) return; // Ignora o comando se um áudio estiver tocando
+
+                    var result = e.results[0][0].transcript.toLowerCase();
+                    text.textContent = result;
 
                     // Limpa o texto após 3 segundos
                     setTimeout(function () {
                         text.textContent = 'aguardando reconhecimento de voz';
                     }, 3000);
 
-                    if (result.toLowerCase() === 'espelho me mostre a jornada para o autoconhecimento') {
-                        recognition.stop();
-                        audioElement4.play();
-                        audioElement4.onended = function () {
-                            recognition.start();
-                        };
+                    if (result === 'espelho me mostre a jornada para o autoconhecimento') {
+                        playAudio(audioElement4);
                     
-                    } else if (result.toLowerCase() === 'espelho me mostre o caminho para auto-compaixão') {
-                        recognition.stop();
-                        audioElement3.play();
-                        audioElement3.onended = function () {
-                            recognition.start();
-                        };
-                    } else if (result.toLowerCase() === 'espelho me mostre a autoconfiança') {
-                        recognition.stop();
-                        audioElement2.play();
-                        audioElement2.onended = function () {
-                            recognition.start();
-                        };
-                    } else if (result.toLowerCase() === 'espelho espelho meu existe alguém mais belo do que eu') {
-                        recognition.stop();
-                        audioElement1.play();
-                        audioElement1.onended = function () {
-                            recognition.start();
-                        };
+                    } else if (result === 'espelho me mostre o caminho para auto-compaixão') {
+                        playAudio(audioElement3);
+                    
+                    } else if (result === 'espelho me mostre a autoconfiança') {
+                        playAudio(audioElement2);
+                    
+                    } else if (result === 'espelho espelho meu existe alguém mais belo do que eu') {
+                        playAudio(audioElement1);
+                    }
+                });
+
+                // Inicia o reconhecimento de voz ao carregar a página
+                startRecognition();
+
+                // Reinicia o reconhecimento de voz quando ele terminar
+                recognition.addEventListener('end', function () {
+                    if (!isAudioPlaying) {
+                        recognition.start();
                     }
                 });
             } else {

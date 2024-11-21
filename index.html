@@ -1,124 +1,167 @@
-<script>
-    window.addEventListener('DOMContentLoaded', function () {
-        // Testa se o navegador suporta o reconhecimento de voz
-        const text = document.getElementById("answer");
-        const audioElement1 = document.getElementById("audioElement1");
-        const audioElement2 = document.getElementById("audioElement2");
-        const audioElement3 = document.getElementById("audioElement3");
-        const audioElement4 = document.getElementById("audioElement4");
+<!DOCTYPE html>
+<html lang="pt-br">
 
-        // Array para armazenar todos os elementos de áudio
-        const audioElements = [audioElement1, audioElement2, audioElement3, audioElement4];
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Recognition App</title>
 
-        let isAudioPlaying = false; // Flag para verificar se um áudio está tocando
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Croissant+One&display=swap" rel="stylesheet">
 
-        // Função para parar todos os áudios
-        function stopAllAudio() {
-            audioElements.forEach(audio => {
-                audio.pause();
-                audio.currentTime = 0;
-            });
-            isAudioPlaying = false;
+    <style>
+        body {
+            font-size: 40px;
+            font-family: 'Courier New', cursive;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url('BackgroundImage.png'); /* Substitua pelo caminho da sua imagem */
+            background-size: cover; /* A imagem cobre toda a tela */
+            background-position: center; /* A imagem fica centralizada */
+            background-attachment: fixed; /* A imagem fica fixa enquanto o conteúdo rola */
         }
 
-        if (window.SpeechRecognition || window.webkitSpeechRecognition) {
-            var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-            var recognition = new SpeechRecognition();
-
-            // Configuração de reconhecimento de voz
-            recognition.continuous = false; // Para de reconhecer ao terminar uma frase
-            recognition.interimResults = false; // Não mostrar resultados intermediários
-            recognition.lang = 'pt-BR';
-
-            // Função para iniciar o reconhecimento de voz
-            function startRecognition() {
-                if (!isAudioPlaying) {
-                    recognition.start();
-                }
-            }
-
-            // Função para tocar o áudio e gerenciar o reconhecimento
-            function playAudio(audioElement) {
-                if (isAudioPlaying) return; // Se já há um áudio tocando, não faça nada
-
-                isAudioPlaying = true;
-                stopAllAudio(); // Para qualquer áudio que esteja tocando
-
-                // Pausar o reconhecimento durante a reprodução do áudio
-                recognition.stop();
-
-                // Toca o áudio
-                audioElement.play();
-                audioElement.onended = function () {
-                    isAudioPlaying = false; // Marca que o áudio terminou
-                    startRecognition(); // Reinicia o reconhecimento de voz
-                };
-            }
-
-            // Resultado do reconhecimento
-            recognition.addEventListener('result', function (e) {
-                if (isAudioPlaying) return; // Ignora o comando se um áudio estiver tocando
-
-                var result = e.results[0][0].transcript.toLowerCase();
-                text.textContent = result;
-
-                // Limpa o texto após 3 segundos
-                setTimeout(function () {
-                    text.textContent = 'aguardando reconhecimento de voz';
-                }, 3000);
-
-                // Verifica as frases e toca o áudio correspondente
-                if (
-                    result === 'espelho me mostre a jornada para o autoconhecimento' ||
-                    result === 'espelho me mostre a jornada para autoconhecimento' ||
-                    result === 'espelho me mostre a jornada para o auto conhecimento' ||
-                    result === 'espelho me mostre a jornada para auto conhecimento'
-                ) {
-                    playAudio(audioElement4);
-
-                } else if (
-                    result === 'espelho me mostre o caminho para auto-compaixão' ||
-                    result === 'espelho me mostre o caminho para a auto-compaixão' ||
-                    result === 'espelho me mostre o caminho para a autocompaixão' ||
-                    result === 'espelho me mostre o caminho para autocompaixão' ||
-                    result === 'espelho me mostre o caminho para alto compaixão' ||
-                    result === 'espelho me mostre o caminho para a alto compaixão' ||
-                    result === 'espelho me mostre o caminho para a altocompaixão' ||
-                    result === 'espelho me mostre o caminho para altocompaixão'
-                ) {
-                    playAudio(audioElement3);
-
-                } else if (
-                    result === 'espelho me mostre a autoconfiança' ||
-                    result === 'espelho me mostre autoconfiança' ||
-                    result === 'espelho me mostre a auto confiança' ||
-                    result === 'espelho me mostre auto confiança' ||
-                    result === 'espelho me mostre a altoconfiança' ||
-                    result === 'espelho me mostre altoconfiança' ||
-                    result === 'espelho me mostre a alto confiança' ||
-                    result === 'espelho me mostre alto confiança'
-                ) {
-                    playAudio(audioElement2);
-
-                } else if (
-                    result === 'espelho espelho meu existe alguém mais belo do que eu' ||
-                    result === 'espelho espelho meu existe alguém mais bela do que eu'
-                ) {
-                    playAudio(audioElement1);
-                }
-            });
-
-            // Inicia o reconhecimento de voz ao carregar a página
-            startRecognition();
-
-            // Reinicia o reconhecimento de voz quando ele terminar
-            recognition.addEventListener('end', function () {
-                if (!isAudioPlaying) {
-                    recognition.start();
-                }
-            });
-        } else {
-            alert('Este navegador não suporta esta funcionalidade ainda!');
+        .footer-text {
+            text-align: center;
+            font-size: 1.5em;
+            padding: 5px;
+            color: white;
+            width: 100%;
+            font-family: 'Croissant One', cursive; /* Aplicando a fonte */
         }
-    });
-</script>
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <p></p>
+                <p></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Elementos de áudio -->
+    <audio id="audioElement1" src="Espelho.mp3"></audio>
+    <audio id="audioElement2" src="AutoConfiança.mp3"></audio>
+    <audio id="audioElement3" src="AutoCompaixão.mp3"></audio>
+    <audio id="audioElement4" src="AutoConhecimento.mp3"></audio>
+
+    <div class="footer-text" id="answer">aguardando reconhecimento de voz</div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            // Testa se o navegador suporta o reconhecimento de voz
+            const text = document.getElementById("answer");
+            const audioElement1 = document.getElementById("audioElement1");
+            const audioElement2 = document.getElementById("audioElement2");
+            const audioElement3 = document.getElementById("audioElement3");
+            const audioElement4 = document.getElementById("audioElement4");
+
+            // Array para armazenar todos os elementos de áudio
+            const audioElements = [audioElement1, audioElement2, audioElement3, audioElement4];
+
+            let isAudioPlaying = false; // Flag para verificar se um áudio está tocando
+
+            // Função para parar todos os áudios
+            function stopAllAudio() {
+                audioElements.forEach(audio => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                });
+                isAudioPlaying = false;
+            }
+
+            if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+                var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+
+                // Configuração de reconhecimento de voz
+                recognition.continuous = false; // Para de reconhecer ao terminar uma frase
+                recognition.interimResults = false; // Não mostrar resultados intermediários
+                recognition.lang = 'pt-BR';
+
+                // Função para iniciar o reconhecimento de voz
+                function startRecognition() {
+                    if (!isAudioPlaying) {
+                        recognition.start();
+                    }
+                }
+
+                // Função para tocar o áudio e gerenciar o reconhecimento
+                function playAudio(audioElement) {
+                    if (isAudioPlaying) return; // Se já há um áudio tocando, não faça nada
+
+                    isAudioPlaying = true;
+                    stopAllAudio(); // Para qualquer áudio que esteja tocando
+
+                    // Pausar o reconhecimento durante a reprodução do áudio
+                    recognition.stop();
+
+                    // Toca o áudio
+                    audioElement.play();
+                    audioElement.onended = function () {
+                        isAudioPlaying = false; // Marca que o áudio terminou
+                        startRecognition(); // Reinicia o reconhecimento de voz
+                    };
+                }
+
+                // Resultado do reconhecimento
+                recognition.addEventListener('result', function (e) {
+                    if (isAudioPlaying) return; // Ignora o comando se um áudio estiver tocando
+
+                    var result = e.results[0][0].transcript.toLowerCase().trim(); // Normaliza a string
+                    text.textContent = result;
+
+                    // Limpa o texto após 3 segundos
+                    setTimeout(function () {
+                        text.textContent = 'aguardando reconhecimento de voz';
+                    }, 3000);
+
+                    // Verifica as frases e toca o áudio correspondente usando expressões regulares
+                    if (/espelho.*(jornada.*autoconhecimento|auto conhecimento)/.test(result)) {
+                        playAudio(audioElement4);
+                    
+                    } else if (/espelho.*(caminho.*auto[- ]?compaixão|altocompaixão)/.test(result)) {
+                        playAudio(audioElement3);
+                    
+                    } else if (/espelho.*(autoconfiança|auto[- ]?confiança|altoconfiança)/.test(result)) {
+                        playAudio(audioElement2);
+                    
+                    } else if (/espelho.*(alguém.*belo|bela)/.test(result)) {
+                        playAudio(audioElement1);
+                    }
+                });
+
+                // Inicia o reconhecimento de voz ao carregar a página
+                startRecognition();
+
+                // Reinicia o reconhecimento de voz quando ele terminar
+                recognition.addEventListener('end', function () {
+                    if (!isAudioPlaying) {
+                        recognition.start();
+                    }
+                });
+            } else {
+                alert('Este navegador não suporta esta funcionalidade ainda!');
+            }
+        });
+    </script>
+</body>
+
+</html>

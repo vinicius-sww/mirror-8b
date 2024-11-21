@@ -28,12 +28,17 @@
         }
 
         .footer-text {
-            text-align: center;
-            font-size: 1.5em;
+            position: fixed; /* Fixa o texto na tela */
+            bottom: 10px; /* Coloca o texto no fundo */
+            left: 10px; /* Coloca o texto à esquerda */
+            font-size: 16px; /* Reduz o tamanho da fonte */
             padding: 5px;
             color: white;
-            width: 100%;
-            font-family: 'Croissant One', cursive; /* Aplicando a fonte */
+            max-width: 300px; /* Limita a largura do texto */
+            word-wrap: break-word; /* Permite que o texto quebre em várias linhas */
+            font-family: 'Croissant One', cursive; /* Mantém a fonte */
+            background-color: rgba(227, 135, 255, 0.5); /* Dá um fundo semitransparente para melhorar a legibilidade */
+            border-radius: 5px; /* Adiciona borda arredondada */
         }
 
         .container {

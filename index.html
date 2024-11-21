@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     
     <!-- Google Fonts -->
-
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Croissant+One&display=swap" rel="stylesheet">
 
     <style>
@@ -28,11 +27,6 @@
             background-attachment: fixed; /* A imagem fica fixa enquanto o conteúdo rola */
         }
 
-        /*.luz-apagada {
-            color: white;
-            background-color: black;
-        } */
-
         .footer-text {
             text-align: center;
             font-size: 1.5em;
@@ -40,7 +34,6 @@
             color: white;
             width: 100%;
             font-family: 'Croissant One', cursive; /* Aplicando a fonte */
-            font-str
         }
 
         .container {
@@ -63,11 +56,11 @@
         </div>
     </div>
 
-    <!-- Elemento de áudio -->
-    <audio id="audioElement1" src="Espelho.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
-    <audio id="audioElement2" src="AutoConfiança.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
-    <audio id="audioElement3" src="AutoCompaixão.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
-    <audio id="audioElement4" src="AutoConhecimento.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
+    <!-- Elementos de áudio -->
+    <audio id="audioElement1" src="Espelho.mp3"></audio>
+    <audio id="audioElement2" src="AutoConfiança.mp3"></audio>
+    <audio id="audioElement3" src="AutoCompaixão.mp3"></audio>
+    <audio id="audioElement4" src="AutoConhecimento.mp3"></audio>
 
     <div class="footer-text" id="answer">aguardando reconhecimento de voz</div>
 
@@ -75,7 +68,10 @@
         window.addEventListener('DOMContentLoaded', function () {
             // Testa se o navegador suporta o reconhecimento de voz
             const text = document.getElementById("answer");
-            const audioElement = document.getElementById("audioElement");
+            const audioElement1 = document.getElementById("audioElement1");
+            const audioElement2 = document.getElementById("audioElement2");
+            const audioElement3 = document.getElementById("audioElement3");
+            const audioElement4 = document.getElementById("audioElement4");
 
             if (window.SpeechRecognition || window.webkitSpeechRecognition) {
                 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
@@ -99,44 +95,31 @@
                         text.textContent = 'aguardando reconhecimento de voz';
                     }, 3000);
 
-                    if (result.toLowerCase() === 'espelho me mostre a jornada para o auto conhecimento') {
-                        // Pausa o reconhecimento de voz
+                    if (result.toLowerCase() === 'espelho me mostre a jornada para o autoconhecimento') {
                         recognition.stop();
-
-                        // Toca o áudio
                         audioElement4.play();
-
-                        // Aguarda o fim do áudio para reiniciar o reconhecimento de voz
                         audioElement4.onended = function () {
                             recognition.start();
                         };
-                    }
-
-                    if (result.toLowerCase() === 'espelho me mostre a o caminho para a autocompaixão') {
-                        // Pausa o reconhecimento de voz
+                    
+                    } else if (result.toLowerCase() === 'espelho me mostre o caminho para auto-compaixão') {
                         recognition.stop();
-
-                        // Toca o áudio
                         audioElement3.play();
-
-                        // Aguarda o fim do áudio para reiniciar o reconhecimento de voz
                         audioElement3.onended = function () {
                             recognition.start();
                         };
-
-
-                    if (result.toLowerCase() === 'espelho espelho meu existe alguem mais belo do que eu') {
-                        // Pausa o reconhecimento de voz
+                    } else if (result.toLowerCase() === 'espelho me mostre a autoconfiança') {
                         recognition.stop();
-
-                        // Toca o áudio
-                        audioElement.play();
-
-                        // Aguarda o fim do áudio para reiniciar o reconhecimento de voz
+                        audioElement2.play();
+                        audioElement2.onended = function () {
+                            recognition.start();
+                        };
+                    } else if (result.toLowerCase() === 'espelho espelho meu existe alguém mais belo do que eu') {
+                        recognition.stop();
+                        audioElement1.play();
                         audioElement1.onended = function () {
                             recognition.start();
                         };
-
                     }
                 });
             } else {

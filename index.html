@@ -22,12 +22,16 @@
             justify-content: space-between;
             min-height: 100vh;
             margin: 0;
+            background-image: url('BackgroundImage.png'); /* Substitua pelo caminho da sua imagem */
+            background-size: cover; /* A imagem cobre toda a tela */
+            background-position: center; /* A imagem fica centralizada */
+            background-attachment: fixed; /* A imagem fica fixa enquanto o conteúdo rola */
         }
 
-        .luz-apagada {
+        /*.luz-apagada {
             color: white;
             background-color: black;
-        }
+        } */
 
         .footer-text {
             text-align: center;
@@ -36,6 +40,7 @@
             color: white;
             width: 100%;
             font-family: 'Croissant One', cursive; /* Aplicando a fonte */
+            font-str
         }
 
         .container {
@@ -59,7 +64,10 @@
     </div>
 
     <!-- Elemento de áudio -->
-    <audio id="audioElement" src="Espelho.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
+    <audio id="audioElement1" src="Espelho.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
+    <audio id="audioElement2" src="AutoConfiança.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
+    <audio id="audioElement3" src="AutoCompaixão.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
+    <audio id="audioElement4" src="AutoConhecimento.mp3"></audio> <!-- Substitua pelo caminho do seu arquivo de áudio -->
 
     <div class="footer-text" id="answer">aguardando reconhecimento de voz</div>
 
@@ -95,16 +103,40 @@
                         // Pausa o reconhecimento de voz
                         recognition.stop();
 
-                        // Altera o fundo
-                        document.body.classList.toggle('luz-apagada');
+                        // Toca o áudio
+                        audioElement4.play();
+
+                        // Aguarda o fim do áudio para reiniciar o reconhecimento de voz
+                        audioElement4.onended = function () {
+                            recognition.start();
+                        };
+                    }
+
+                    if (result.toLowerCase() === 'espelho me mostre a o caminho para a autocompaixão') {
+                        // Pausa o reconhecimento de voz
+                        recognition.stop();
+
+                        // Toca o áudio
+                        audioElement3.play();
+
+                        // Aguarda o fim do áudio para reiniciar o reconhecimento de voz
+                        audioElement3.onended = function () {
+                            recognition.start();
+                        };
+
+
+                    if (result.toLowerCase() === 'espelho espelho meu existe alguem mais belo do que eu') {
+                        // Pausa o reconhecimento de voz
+                        recognition.stop();
 
                         // Toca o áudio
                         audioElement.play();
 
                         // Aguarda o fim do áudio para reiniciar o reconhecimento de voz
-                        audioElement.onended = function () {
+                        audioElement1.onended = function () {
                             recognition.start();
                         };
+
                     }
                 });
             } else {

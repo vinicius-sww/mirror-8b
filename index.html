@@ -80,6 +80,7 @@
             ];
 
             let isAudioPlaying = false;
+            let recognitionInProgress = false;
 
             // Função para parar todos os áudios
             function stopAllAudio() {
@@ -107,7 +108,7 @@
                 recognition.lang = 'pt-BR';
 
                 function startRecognition() {
-                    if (!isAudioPlaying) {
+                    if (!isAudioPlaying && !recognitionInProgress) {
                         recognition.stop();
                         recognition.start();
                     }
@@ -118,85 +119,4 @@
 
                     isAudioPlaying = true;
                     stopAllAudio();
-                    recognition.stop();
-
-                    audioElement.play();
-                    audioElement.onended = function () {
-                        isAudioPlaying = false;
-                        startRecognition();
-                    };
-                }
-
-                // Processamento do resultado de reconhecimento
-                recognition.addEventListener('result', function (e) {
-                    if (isAudioPlaying) return;
-
-                    const result = e.results[0][0].transcript.toLowerCase().trim();
-                    text.textContent = result;
-
-                    setTimeout(() => {
-                        text.textContent = 'aguardando reconhecimento de voz';
-                    }, 3000);
-
-                    // Comandos de voz
-                    if (/espelho.*(jornada.*autoconhecimento|auto conhecimento|altoconhecimento|alto conhecimento)/.test(result)) {
-                        playAudio(audioElements[3]);
-                    } else if (/espelho.*(caminho.*auto[- ]?compaixão|altocompaixão)/.test(result)) {
-                        playAudio(audioElements[2]);
-                    } else if (/espelho.*(autoconfiança|auto[- ]?confiança|altoconfiança)/.test(result)) {
-                        playAudio(audioElements[1]);
-                    } else if (/espelho.*(alguém.*belo|bela)/.test(result)) {
-                        playAudio(audioElements[0]);
-                    } else if (/espelho.*(por cento|porcento)/.test(result)) {
-                        playAudio(Math.random() < 0.5 ? audioElements[4] : audioElements[5]);
-                    } else if (/bom dia|olá|oi.*(espelho)/.test(result)) {
-                        playAudio(audioElements[6]);
-                    } else if (/espelho.*(alguém)/.test(result)) {
-                        playAudio(audioElements[10]);
-                    } else if (/espelho.*(feio|feia|horrorosa|horroroso|esquisito|esquisita)/.test(result)) {
-                        playAudio(audioElements[7]);
-                    } else if (/espelho.*(eu.*sou.*bonita|linda|bela|perfeita)/.test(result)) {
-                        playAudio(audioElements[8]);
-                    } else if (/espelho.*(eu.*sou.*bonito|lindo|belo|perfeito)/.test(result)) {
-                        playAudio(audioElements[9]);
-                    }
-                });
-
-                // Remove o 'muted' após iniciar o reconhecimento de voz
-                recognition.addEventListener('start', function () {
-                    unmuteAllAudio();
-                });
-
-                startRecognition();
-
-                recognition.addEventListener('end', function () {
-                    if (!isAudioPlaying) {
-                        recognition.start();
-                    }
-                });
-            } else {
-                alert('Este navegador não suporta esta funcionalidade ainda!');
-            }
-
-            // Função para alternar tela cheia
-            function toggleFullscreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    }
-                }
-            }
-
-            // Evento de teclado para detectar a tecla "R"
-            document.addEventListener('keydown', function (event) {
-                if (event.key.toLowerCase() === 'r') {
-                    toggleFullscreen();
-                }
-            });
-        });
-    </script>
-</body>
-
-</html>
+                    recog

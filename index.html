@@ -80,7 +80,6 @@
             ];
 
             let isAudioPlaying = false;
-            let isCooldown = false; // Variável para controlar o cooldown
 
             // Função para parar todos os áudios
             function stopAllAudio() {
@@ -108,14 +107,14 @@
                 recognition.lang = 'pt-BR';
 
                 function startRecognition() {
-                    if (!isAudioPlaying && !isCooldown) {
+                    if (!isAudioPlaying) {
                         recognition.stop();
                         recognition.start();
                     }
                 }
 
                 function playAudio(audioElement) {
-                    if (isAudioPlaying || isCooldown) return;
+                    if (isAudioPlaying) return;
 
                     isAudioPlaying = true;
                     stopAllAudio();
@@ -124,18 +123,13 @@
                     audioElement.play();
                     audioElement.onended = function () {
                         isAudioPlaying = false;
-                        // Inicia o cooldown de 5 segundos após o áudio
-                        isCooldown = true;
-                        setTimeout(() => {
-                            isCooldown = false;
-                            startRecognition();
-                        }, 5000); // 5 segundos de cooldown
+                        startRecognition();
                     };
                 }
 
                 // Processamento do resultado de reconhecimento
                 recognition.addEventListener('result', function (e) {
-                    if (isAudioPlaying || isCooldown) return;
+                    if (isAudioPlaying) return;
 
                     const result = e.results[0][0].transcript.toLowerCase().trim();
                     text.textContent = result;
@@ -176,31 +170,13 @@
                 startRecognition();
 
                 recognition.addEventListener('end', function () {
-                    if (!isAudioPlaying && !isCooldown) {
+                    if (!isAudioPlaying) {
                         recognition.start();
                     }
                 });
             } else {
                 alert('Este navegador não suporta esta funcionalidade ainda!');
             }
-
-            // Função para alternar tela cheia
-            function toggleFullscreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    }
-                }
-            }
-
-            // Evento de teclado para detectar a tecla "R"
-            document.addEventListener('keydown', function (event) {
-                if (event.key.toLowerCase() === 'r') {
-                    toggleFullscreen();
-                }
-            });
         });
     </script>
 </body>

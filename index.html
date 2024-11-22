@@ -177,6 +177,24 @@
             } else {
                 alert('Este navegador não suporta esta funcionalidade ainda!');
             }
+
+            // Função para alternar tela cheia
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            }
+
+            // Evento de teclado para detectar a tecla "R"
+            document.addEventListener('keydown', function (event) {
+                if (event.key.toLowerCase() === 'r') {
+                    toggleFullscreen();
+                }
+            });
         });
     </script>
 </body>

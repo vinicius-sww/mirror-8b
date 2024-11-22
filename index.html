@@ -1,122 +1,141 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+document.addEventListener('DOMContentLoaded', function () {
+    const text = document.getElementById("answer");
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speech Recognition App</title>
+    // Seleção de elementos de áudio
+    const audioElements = [
+        document.getElementById("audioElement1"),
+        document.getElementById("audioElement2"),
+        document.getElementById("audioElement3"),
+        document.getElementById("audioElement4"),
+        document.getElementById("audioElement5"),
+        document.getElementById("audioElement6"),
+        document.getElementById("audioElement7"),
+        document.getElementById("audioElement8"),
+        document.getElementById("audioElement9"),
+        document.getElementById("audioElement10"),
+        document.getElementById("audioElement11")
+    ];
 
-    <!-- BOOTSTRAP -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Croissant+One&display=swap" rel="stylesheet">
+    let isAudioPlaying = false;
 
-    <style>
-        body {
-            font-size: 40px;
-            font-family: 'Courier New', cursive;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-image: url('BackgroundImage.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+    // Função para parar todos os áudios
+    function stopAllAudio() {
+        audioElements.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        isAudioPlaying = false;
+    }
+
+    // Remove o atributo 'muted' de todos os elementos de áudio
+    function unmuteAllAudio() {
+        audioElements.forEach(audio => {
+            audio.muted = false;
+        });
+    }
+
+    // Inicialização de reconhecimento de voz
+    if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'pt-BR';
+        recognition.maxAlternatives = 1; // Limitar as alternativas
+
+        function startRecognition() {
+            if (!isAudioPlaying) {
+                recognition.stop();
+                recognition.start();
+            }
         }
 
-        .footer-text {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 16px;
-            color: white;
-            max-width: 300px;
-            word-wrap: break-word;
-            font-family: 'Croissant One', cursive;
-            background-color: rgba(227, 135, 255, 0.5);
-            border-radius: 5px;
-            padding: 5px;
-        }
-    </style>
-</head>
+        function playAudio(audioElement) {
+            if (isAudioPlaying) return;
 
-<body>
-    <!-- Elementos de áudio -->
-    <audio id="audioElement1" src="Espelho.mp3" preload="auto" muted></audio>
-    <audio id="audioElement2" src="AutoConfiança.mp3" preload="auto" muted></audio>
-    <audio id="audioElement3" src="AutoCompaixão.mp3" preload="auto" muted></audio>
-    <audio id="audioElement4" src="AutoConhecimento.mp3" preload="auto" muted></audio>
-    <audio id="audioElement5" src="AmarMais.mp3" preload="auto" muted></audio>
-    <audio id="audioElement6" src="porcento.mp3" preload="auto" muted></audio>
-    <audio id="audioElement7" src="Saudações.mp3" preload="auto" muted></audio>
-    <audio id="audioElement8" src="SouFeia.mp3" preload="auto" muted></audio>
-    <audio id="audioElement9" src="VocêÉlinda.mp3" preload="auto" muted></audio>
-    <audio id="audioElement10" src="VocêÉlindo.mp3" preload="auto" muted></audio>
-    <audio id="audioElement11" src="ConjuntoDeElogios.mp3" preload="auto" muted></audio>
+            isAudioPlaying = true;
+            stopAllAudio();
+            recognition.stop();
 
-    <div class="footer-text" id="answer">aguardando reconhecimento de voz</div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const text = document.getElementById("answer");
-
-            // Seleção de elementos de áudio
-            const audioElements = [
-                document.getElementById("audioElement1"),
-                document.getElementById("audioElement2"),
-                document.getElementById("audioElement3"),
-                document.getElementById("audioElement4"),
-                document.getElementById("audioElement5"),
-                document.getElementById("audioElement6"),
-                document.getElementById("audioElement7"),
-                document.getElementById("audioElement8"),
-                document.getElementById("audioElement9"),
-                document.getElementById("audioElement10"),
-                document.getElementById("audioElement11")
-            ];
-
-            let isAudioPlaying = false;
-            let recognitionInProgress = false;
-
-            // Função para parar todos os áudios
-            function stopAllAudio() {
-                audioElements.forEach(audio => {
-                    audio.pause();
-                    audio.currentTime = 0;
-                });
+            audioElement.play();
+            audioElement.onended = function () {
                 isAudioPlaying = false;
+                startRecognition();
+            };
+        }
+
+        // Processamento do resultado de reconhecimento
+        recognition.addEventListener('result', function (e) {
+            if (isAudioPlaying) return;
+
+            const result = e.results[0][0].transcript.toLowerCase().trim();
+            text.textContent = result;
+
+            setTimeout(() => {
+                text.textContent = 'aguardando reconhecimento de voz';
+            }, 3000);
+
+            // Ignora qualquer resultado irrelevante ou muito curto
+            if (result.length < 3 || /[^a-zA-Z0-9áéíóúãõç]/.test(result)) {
+                return;
             }
 
-            // Remove o atributo 'muted' de todos os elementos de áudio
-            function unmuteAllAudio() {
-                audioElements.forEach(audio => {
-                    audio.muted = false;
-                });
+            // Comandos de voz
+            if (/espelho.*(jornada.*autoconhecimento|auto conhecimento|altoconhecimento|alto conhecimento)/.test(result)) {
+                playAudio(audioElements[3]);
+            } else if (/espelho.*(caminho.*auto[- ]?compaixão|altocompaixão)/.test(result)) {
+                playAudio(audioElements[2]);
+            } else if (/espelho.*(autoconfiança|auto[- ]?confiança|altoconfiança)/.test(result)) {
+                playAudio(audioElements[1]);
+            } else if (/espelho.*(alguém.*belo|bela)/.test(result)) {
+                playAudio(audioElements[0]);
+            } else if (/espelho.*(por cento|porcento)/.test(result)) {
+                playAudio(Math.random() < 0.5 ? audioElements[4] : audioElements[5]);
+            } else if (/bom dia|olá|oi.*(espelho)/.test(result)) {
+                playAudio(audioElements[6]);
+            } else if (/espelho.*(alguém)/.test(result)) {
+                playAudio(audioElements[10]);
+            } else if (/espelho.*(feio|feia|horrorosa|horroroso|esquisito|esquisita)/.test(result)) {
+                playAudio(audioElements[7]);
+            } else if (/espelho.*(eu.*sou.*bonita|linda|bela|perfeita)/.test(result)) {
+                playAudio(audioElements[8]);
+            } else if (/espelho.*(eu.*sou.*bonito|lindo|belo|perfeito)/.test(result)) {
+                playAudio(audioElements[9]);
             }
+        });
 
-            // Inicialização de reconhecimento de voz
-            if (window.SpeechRecognition || window.webkitSpeechRecognition) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recognition = new SpeechRecognition();
+        // Remove o 'muted' após iniciar o reconhecimento de voz
+        recognition.addEventListener('start', function () {
+            unmuteAllAudio();
+        });
 
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                recognition.lang = 'pt-BR';
+        startRecognition();
 
-                function startRecognition() {
-                    if (!isAudioPlaying && !recognitionInProgress) {
-                        recognition.stop();
-                        recognition.start();
-                    }
-                }
+        recognition.addEventListener('end', function () {
+            if (!isAudioPlaying) {
+                recognition.start();
+            }
+        });
+    } else {
+        alert('Este navegador não suporta esta funcionalidade ainda!');
+    }
 
-                function playAudio(audioElement) {
-                    if (isAudioPlaying) return;
+    // Função para alternar tela cheia
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
 
-                    isAudioPlaying = true;
-                    stopAllAudio();
-                    recog
+    // Evento de teclado para detectar a tecla "R"
+    document.addEventListener('keydown', function (event) {
+        if (event.key.toLowerCase() === 'r') {
+            toggleFullscreen();
+        }
+    });
+});
